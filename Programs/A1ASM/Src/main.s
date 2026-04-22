@@ -23,7 +23,7 @@ GPIO_D_CLR          equ (GPIOD_BASE + 0x1A)
     
 
 ;* We need minimal memory setup of InRootSection placed in Code Section
-    AREA  |.text|, CODE, READONLY, ALIGN = 3
+    AREA  |.text|, CODE, READONLYDj, ALIGN = 3
     ALIGN
 main
     BL initITSboard             ; needed by the board to setup
