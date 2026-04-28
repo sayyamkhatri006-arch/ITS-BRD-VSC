@@ -1,0 +1,5 @@
+CompileFlags:
+  CompilationDatabase: /Users/sayyamsinghkhatri/ITS-BRD-VSC/Programs/A2ASM/out/A2ASM/ITSboard_Assembly/Debug
+  Add:
+    - -include
+    - /Users/sayyamsinghkhatri/ITS-BRD-VSC/Programs/A2ASM/out/A2ASM/ITSboard_Assembly/Debug/compile_macros.h
