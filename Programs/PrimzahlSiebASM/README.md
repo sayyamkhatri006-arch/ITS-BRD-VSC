@@ -45,7 +45,7 @@ class Primzahlen
         _feld[0] = 1;
         _feld[1] = 1;
 
-        for(int z = 2 ; z < _feld.length ; ++z)
+        for(int z = 2 ; z*z < _feld.length ; ++z)
         {
             if(_feld[z] == 0) // wenn es eine Primzahl ist !
             {
@@ -71,6 +71,10 @@ class Primzahlen
         {
             if(feld[i] == 0)
             {
+                //primArr[x++] = i;
+
+
+                
                 _primZahlen.add(i);
             }
         }
