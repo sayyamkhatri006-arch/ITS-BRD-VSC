@@ -4,9 +4,9 @@
 ;************************************************
                    AREA MyData, DATA, align = 2
 
-Feld FILL 1000 ; Feld speichert nur die Wahrheitswerten 0 = Pirmzahlen , 1 = keine Primzahlen
+Feld FILL 1001             ; Feld speichert nur die Wahrheitswerten 0 = Pirmzahlen , 1 = keine Primzahlen
 
-Primzahlen SPACE 168*2   ; 168 Words reservieren (2 Bytes pro Word) ; Speichern wir hier die Primzahlen analysiert aus dem gesiebten Feld 
+Primzahlen FILL 168,0,2     ;Primzahlen SPACE 168*2   ; 168 Words reservieren (2 Bytes pro Word) ; Speichern wir hier die Primzahlen analysiert aus dem gesiebten Feld 
 
 ;***********************************************
 ;* Beginn des Programms *
@@ -22,9 +22,9 @@ main            PROC
 
 ;Wir laden die Adresse des Felds in einem Register
                 LDR   R0,=Feld    ; das ist der Psuedobefehl , der die Adresse des Feld vom Speicher ins Register ladet.
-                MOV   R5,#1       ; wir legen 1( keine Primzahl in R5 und dann machen wir damit weiter )
-                STRB  R5,[R0,#0]  ; Da die 0 keine Primzahl ist, streichen wir es ab.
-                STRB  R5,[R0,#1]  ; Da die 1 keine Primzahl ist, streichen wir es auch ab. ( # ist nur für den Konstanten werten für Register benutzen wir die genau an )
+                MOV   R5,#1       ; wir legen 1 ( keine Primzahl Werkzeug in R5 und dann machen wir damit weiter )
+                STRB  R5,[R0,#0]  ; Da die 0 keine Primzahl ist, streichen wir es mit 1 ab.
+                STRB  R5,[R0,#1]  ; Da die 1 keine Primzahl ist, streichen wir es auch mit 1 ab. ( # ist nur für den Konstanten werten für Register benutzen wir die genau an )
 
 FOR_01          ;Äußere For-schleife, die 2 bis 1000 Zahlen überprüft.
                 MOV R2,#2         ; Startwert-01 (Variable Z) Fangen wir dann bei 2 an. 
@@ -73,16 +73,12 @@ ENDIF_01
 
 
 STEP_01
-                ADD  R2,#1; dann wird die nächste Zahl geprüft ( ++i )
-                LDRB R1,[R0,R2] ; Holen wir den Inhalt vom Feld für diese Zahl, da wir es jetzt auch da drin 1(Keine Primzahlen) gespeichert habe , kann es dazu führen,dass wir auf 1 landen und dann müssen wir den Fall nicht mehr prüfen.
-                b   UNTIL_01 ;
+                ADD  R2,#1      ; Startwert-01 (Variable Z) erhöht und dann wird die nächste Zahl geprüft ( ++z )
+                LDRB R1,[R0,R2] ; Holen wir den Inhalt vom Feld für diese Variable Z , da wir es jetzt auch da drin 1(Keine Primzahlen) gespeichert habe , kann es dazu führen,dass wir auf 1 landen und dann müssen wir den Fall nicht mehr prüfen.
+                b   UNTIL_01    ;
 
 ENDDO_01
             
-
-
-
-
                        
 
 ;Wir benutzen hier das Sieb von Eratosthenes
