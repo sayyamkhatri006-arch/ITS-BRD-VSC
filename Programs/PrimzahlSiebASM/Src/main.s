@@ -11,7 +11,7 @@ Primzahlen FILL 168,0,2     ;Primzahlen SPACE 168*2   ; 168 Words reservieren (2
 ;***********************************************
 ;* Beginn des Programms *
 ;************************************************
-    AREA |.text|, CODE, READONLY, ALIGN = 1
+    AREA |.text|, CODE, READONLY, ALIGN = 2
 
 ; ----- S t a r t des Hauptprogramms -----
                 EXPORT main
@@ -20,6 +20,8 @@ main            PROC
                 bl    initITSboard                 ; HW Initialisieren
 
 
+;Hier ist unser Sieb Feld
+;==========================================================================================================================================================
 ;Wir laden die Adresse des Felds in einem Register
                 LDR   R0,=Feld    ; das ist der Psuedobefehl , der die Adresse des Feld vom Speicher ins Register ladet.
                 MOV   R5,#1       ; wir legen 1 ( keine Primzahl Werkzeug in R5 und dann machen wir damit weiter )
@@ -29,7 +31,7 @@ main            PROC
 FOR_01          ;Äußere For-schleife, die 2 bis 1000 Zahlen überprüft.
                 MOV R2,#2         ; Startwert-01 (Variable Z) Fangen wir dann bei 2 an. 
                 MOV R3,#1001      ; EndWert-01 (Die Länge des Felds)
-                LDRB R1,[R0,R2]   ; wir holen den 1 byte Wert aus dem Feld raus genau von diesem Startwert Offset.
+                
 
 UNTIL_01
                 MUL     R6,R2,R2  ; Wir prüfen, ob das Vielfache vom Startwert-01 kleiner als Endwert-01 ist. ( z*z < _feld.length)
@@ -39,6 +41,7 @@ UNTIL_01
 
 DO_01
 IF_01
+                LDRB R1,[R0,R2]   ; wir holen den 1 byte Wert aus dem Feld raus genau von diesem Startwert Offset.
                 CMP     R1,#0     ; Vergleiche Wenn den Inhalt auf diese Index eine 0 (primzahl ist)
                 beq     THEN_01   ; Wenn die R1( Inhalt vom Index ) (0 = Primzahl) gleich sind , springe bitte zum THEN-01.
                 b       ELSE_01   ; Wenn nicht dann zum ELSE-01. 
@@ -64,27 +67,61 @@ STEP_02
 
 ENDDO_02
 
-                b       STEP_01   ; mach das selbe Verfahren auch für andere Zahlen bis 1000.
+              ;  b       STEP_01   ; mach das selbe Verfahren auch für andere Zahlen bis 1000.
 
 
 ELSE_01         
 ENDIF_01
 
 
-
 STEP_01
                 ADD  R2,#1      ; Startwert-01 (Variable Z) erhöht und dann wird die nächste Zahl geprüft ( ++z )
-                LDRB R1,[R0,R2] ; Holen wir den Inhalt vom Feld für diese Variable Z , da wir es jetzt auch da drin 1(Keine Primzahlen) gespeichert habe , kann es dazu führen,dass wir auf 1 landen und dann müssen wir den Fall nicht mehr prüfen.
                 b   UNTIL_01    ;
 
 ENDDO_01
             
+
+
+
+;Hier Fängt das Verfahen , in dem wir aus dem gesiebten Feld die Primzahlen extrahieren.
+;=============================================================================================================================================================================
+For_03      ldr      R8,= Primzahlen    ; wir holen die Adresse des Feld , in dem wir die Primzahlen aus dem gesiebten Feld extrahieren
+            mov      R7,#0              ; Startwert unsere 3-Forschleife
+            mov      R9,#0              ; Zähler für Primzahlen Index , damit die schon nacheinander hingelegt werden.
+                                        ; Endwert haben wir schon bei der R3 100
+
+Until_03
+          CMP        R7,R3               ; Vergleich Wenn der Startwert und Endwert
+          blo        Do_03               ; Wenn Startwert kleiner als Endwert ist dann springe zu Do_03
+          b          EndDo_03            ; Wenn nicht spring bitte raus.
+Do_03
+IF_02
+          LDRB       R1,[R0,R7]          ; Wir holen den Startwert vom Feld 
+          CMP        R1,#0               ; Prüfen, ob es eine Primzahl ist ? wenn == 0 dann ja
+          beq        THEN_02             ; wenn es eine Primzahl ist dann springe zu TEHN_02
+          b          ELSE_02             ; dann springen wir einfach raus.
+
+THEN_02
+          STRH      R7,[R8,R9]           ; Dann schreiben wir die gesiebte Primzahl rein.
+          ADD       R9,R9,#2             ; Dann erhöhen wir unser ArrayIndex Zähler um 2,da im Speicher 2 bytes für ein Wert benutzt wird.
+          b         ENDIF_02             ; Weiter mit dem nächsten Zahl das selbe machen.
+ELSE_02
+ENDIF_02
+
+Step_03
+          ADD       R7,R7,#1              ; machen wir selbe mit dem nächsten Zahl.
+          b         Until_03              ; Prüfe auch genauso alle Zahlen.
+
+EndDo_03
+
                        
 
 ;Wir benutzen hier das Sieb von Eratosthenes
 ;Dann werden wir die Primzahlen raus nehmen und in Primzahlen-Speicher schreiben.
      
-        
+
+
+
 forever         b   forever                        
                 ENDP
                 END

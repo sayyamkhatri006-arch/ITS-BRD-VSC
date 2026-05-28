@@ -3,6 +3,7 @@
 - Wir fangen zu streichen immer bei Quadrat der Zahl an.
 
 - Dieses Teilfunktionsergebnis muss vom Speicher analysiert werden und die Primzahlen in einem anderen Speicherbereich gespeichert werden.
+
 # Aufbau des Programms in Form eines Java-Programms
 import java.util.*;
 /**
