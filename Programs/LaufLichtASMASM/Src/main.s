@@ -78,7 +78,7 @@ For_01	  MOV 	  R4,R10 				; eine Kopie zu R4 geben, damit weiter zu arbeiten
 		  MOV 	  R7,#DelayTime 		; Unser Delay Konstante wert laden
 
 Until_01
-		  CMP 	  R5,R6 				; Der StartWert mit EndWert verglechen
+		  CMP 	  R5,R6 				; Der StartWert < EndWert verglechen
 		  BLO 	  Do_01 				; dann springen wir zu do und machen wir was.
 		  B 	  EndDo_01				; machen wir zu Ende
 
@@ -92,10 +92,8 @@ Step_01
 		  ADD 	  R5,R5,#1 				; StartWert um 1 erhöhen 
 
 		  ; jetzt alles rotieren 	
-		  AND 	  R8,R4,#1				; wir sichern uns die letzte Bit damit wir es auf die 15 stelle packen können. 
-		  LSR 	  R4,R4,#1 				; Jetzt können wir es locker verschieben ,wenn wir kein Gefahr haben ,dass der letzter Bit verlohren gehalten
-		  LSL 	  R8,R8,#15 			; wir schieben diese Letzter Bit zu der 15 stelle , so es wieder kommen sollte, damit eine zyklisch realisert wird.
-		  ORR 	  R4,R4,R8				; mit Loglische Oder packen wir den da einfach zusammen. 
+		  LSRS 	  R4,R4,#1 				; wir schieben nach rechts mit flags setzen , wenn ein Bit rausfliegt , wird der Carry flag gesetzt.
+		  ORRCS   R4,R4,#0x8000			; wenn der Carry flag gesetzt wird , wollen wir gerne die rausgeflogene Bit ganz vorne auf der 16 stelle verknüpfen.( ORRCS = logische Oder mit Carry Set ) ( Carray Set = wenn Carray = 1 )
 		  b 	  Until_01				; und weiterarbeiten
 		  
 EndDo_01
@@ -109,12 +107,12 @@ SHOW_LEDS	PROC
 			MOV 	R4,R0 			; der Muster als Parametereingabe nehmen und R4 reintun
 			
 			;Jetzt wir schrieben dieses Muster auf GPIO_E (LED23-LED16)
-			LDR 	R5,=GPIO_E_CLR  ; Bevor neues LEDs zu setzen löschen wir die alten 
+			LDR 	R5,=GPIO_E_CLR  ; Bevor neues LEDs zu setzen löschen wir die alten ( man schreibt 1 ! ) 
 			LDR 	R6,=GPIO_E_SET  ; Die Adresse zu setzen holen
 
 			MOV 	R7,#0x00FF 		; nur die Unteren 8 bits löschen, da nur die unteren 8 bits von GPIO_E sind, mit der LEDs 23-16 verbunden.
 			STR 	R7,[R5]			; Alle alten LEDs löschen 
-			LSR 	R8,R4,#8		; wir wollen die obere bits (15-8 bits) vom Muster auf GPIO_E schreiben
+			LSR 	R8,R4,#8		; wir wollen die obere bits (15-8 bits) zu ( 7 bis 0 bits ) schieben. da dieser ( 7 - 0 bits ) stelle sind zuständig die LEDs 23 - 16 anzumachen.
 			STRB 	R8,[R6]			; Jetzt schreiben wir nur auf die untere 8 bits diesen neuen Muster egal was auf die GPIO_E
 
 
