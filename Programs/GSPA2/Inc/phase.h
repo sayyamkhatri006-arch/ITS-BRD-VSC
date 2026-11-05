@@ -2,6 +2,7 @@
 #define PHASE_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 /**
  * @brief Identifikationsnummern für die einzelnen Phasen.
@@ -19,6 +20,20 @@ typedef enum {
     RUECKWAERTS,
     STILLSTAND
 } Phase_direction;
+
+
+
+/**
+ * 
+ */
+typedef struct {
+    int phase;
+    uint32_t zeitstemple;
+    int phase_counter;
+} zeitphase;
+
+
+
 
 /**
  * @brief Speichert die aktuelle Bewegungsrichtung der Phase.
@@ -64,13 +79,30 @@ extern int get_phase_direction(void);
  * @param channel1 Zustand des ersten Eingangskanals.
  * @param channel2 Zustand des zweiten Eingangskanals.
  */
-extern void set_aktuelle_phase(int channel1, int channel2);
+extern void set_aktuelle_phase(bool channel1, bool channel2 , uint32_t zeitstemple);
 
 /**
  * @brief Gibt den aktuellen Wert des Phasen-Zählers zurück.
  * @return Der aktuelle Zählerstand der Phase.
  */
 extern int get_phaese_counter(void);
+
+
+/**
+ * @brief Gibt die Zeitstemple der letzten Phase zurück.
+ * @return Der aktuelle Zählerstand der Phase.
+ */
+extern uint32_t get_zeitstemple_letzte_phase(void);
+
+
+
+/**
+ * @brief Gibt die Zeitstemple der aktuellen Phase zurück.
+ * @return Der aktuelle Zählerstand der Phase.
+ */
+extern uint32_t get_zeitstemple_aktuelle_phase(void);
+
+
     
 
 #endif

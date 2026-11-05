@@ -1,7 +1,9 @@
 #include "../Inc/phase.h"
 
-static int aktuelle_phase = 0;  // Startphase unbekannt
-static int letzte_phase = 0;     // Startphase unbekannt
+
+static zeitphase aktuelle_zeitphase = { .phase = 0 , .phase_counter = 0, .zeitstemple = 0 };
+static zeitphase letzte_zeitphase = { .phase = 0 , .phase_counter = 0, .zeitstemple = 0 };
+
 int phase_direction = STILLSTAND;  // Start mit Stillstand
 
 
@@ -11,7 +13,7 @@ int phase_direction = STILLSTAND;  // Start mit Stillstand
  */
 bool is_phase_changed(void) 
 {
-    return aktuelle_phase != letzte_phase;
+    return aktuelle_zeitphase.phase != letzte_zeitphase.phase;
 }
 
 /**
@@ -20,15 +22,15 @@ bool is_phase_changed(void)
  */
 void update_phase_counter(void) 
 {
-    if(aktuelle_phase == (letzte_phase + 1) || (letzte_phase == 4 && aktuelle_phase == 1)) // wenn die aktuelle Phase um 1 höher als die letzte Phase ist, dann ist die Bewegung vorwärts
+    if(aktuelle_zeitphase.phase == (letzte_zeitphase.phase + 1) || (letzte_zeitphase.phase == 4 && aktuelle_zeitphase.phase == 1)) // wenn die aktuelle Phase um 1 höher als die letzte Phase ist, dann ist die Bewegung vorwärts
     {
         phase_direction = VORWAERTS;
-        ++phase_counter;
+        ++aktuelle_zeitphase.phase_counter; 
     } 
-    else if(aktuelle_phase == (letzte_phase - 1) || (letzte_phase == 1 && aktuelle_phase == 4))   // wenn die aktuelle Phase um 1 niedriger als die letzte Phase ist, dann ist die Bewegung rückwärts
+    else if(aktuelle_zeitphase.phase == (letzte_zeitphase.phase - 1) || (letzte_zeitphase.phase == 1 && aktuelle_zeitphase.phase == 4))   // wenn die aktuelle Phase um 1 niedriger als die letzte Phase ist, dann ist die Bewegung rückwärts
     {
         phase_direction = RUECKWAERTS;
-        --phase_counter;
+        --aktuelle_zeitphase.phase_counter; 
     } 
     else  // wenn die letzte Phase unbekannt ist, dann wird die Richtung auf Stillstand gesetzt
     {
@@ -42,7 +44,7 @@ void update_phase_counter(void)
  */
 int get_aktuelle_phase(void) 
 {
-    return aktuelle_phase;
+    return aktuelle_zeitphase.phase;
 }
 
 /**
@@ -51,7 +53,7 @@ int get_aktuelle_phase(void)
  */
 int get_letzte_phase(void) 
 {
-    return letzte_phase;
+    return letzte_zeitphase.phase;
 }
 
 /**
@@ -59,23 +61,28 @@ int get_letzte_phase(void)
  * @param channel1 Zustand des ersten Eingangskanals.
  * @param channel2 Zustand des zweiten Eingangskanals.
  */
-void set_aktuelle_phase(int channel1, int channel2) 
+void set_aktuelle_phase(bool channel1, bool channel2 , uint32_t zeitstemple) 
 {
-    if (!channel1 && !channel2)    // beide 
+    letzte_zeitphase = aktuelle_zeitphase;
+    if (!channel1 && !channel2)     
     {
-        aktuelle_phase = PHASE_A;
+        aktuelle_zeitphase.phase = PHASE_A;
+        aktuelle_zeitphase.zeitstemple = zeitstemple;
     } 
     else if (channel1 && !channel2) 
     {
-        aktuelle_phase = PHASE_B;
+        aktuelle_zeitphase.phase = PHASE_B;
+        aktuelle_zeitphase.zeitstemple = zeitstemple;
     } 
     else if (channel1 && channel2) 
     {
-        aktuelle_phase = PHASE_C;
+        aktuelle_zeitphase.phase = PHASE_C;
+        aktuelle_zeitphase.zeitstemple = zeitstemple;
     } 
     else 
     {
-        aktuelle_phase = PHASE_D;
+        aktuelle_zeitphase.phase = PHASE_D;
+        aktuelle_zeitphase.zeitstemple = zeitstemple;
     }
 }
 
@@ -95,5 +102,5 @@ int get_phase_direction(void)
  */
 int get_phaese_counter(void) 
 {
-    return phase_counter;
+    return aktuelle_zeitphase.phase_counter;
 }
