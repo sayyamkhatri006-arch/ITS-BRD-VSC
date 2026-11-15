@@ -15,10 +15,10 @@
  */
 typedef enum
 {
-    KEINE,          //0 STILLSTAND
-    D23,            //1 FORWARDS
-    D22,            //2 BACKWARDS
-    D21             //3 FEHLERSTAND
+    D23,            //0 FORWARDS
+    D22,            //1 BACKWARDS
+    D21,            //2 FEHLERSTAND
+    KEINE,          //3 STILLSTAND
 } my_led;
 
 /**
