@@ -52,4 +52,9 @@ void set_error_state_led(void);
  */
 void set_counter_led_as_bit(int counter);
 
+/**
+ * @brief Schaltet alle LEDs aus.
+ */
+void reset_leds(void);
+
 #endif

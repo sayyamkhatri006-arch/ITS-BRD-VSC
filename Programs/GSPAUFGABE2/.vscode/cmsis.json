@@ -1,0 +1,9 @@
+{
+    "targetSet": {
+        "GSPAUFGABE2": {
+            "activeTargetType": "ITSboard"
+        }
+    },
+    "activeSolution": "../GSPAUFGABE2.csolution.yml",
+    "activeTarget": "ITSboard"
+}

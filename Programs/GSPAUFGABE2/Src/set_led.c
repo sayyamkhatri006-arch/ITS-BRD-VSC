@@ -1,6 +1,10 @@
 #include "set_led.h"
 #include "stm32f4xx.h"
-
+#define LED_D21 (0x01 << 5)     // PE5
+#define LED_D22 (0x01 << 6)     // PE6
+#define LED_D23 (0x01 << 7)     // PE7
+#define LEDS_D8_D15 0xFF        // PD0 bis PD7
+#define AUS 16                  // obere 16 bits im BSRR = ausschalten
 
 
 /**
@@ -20,7 +24,7 @@ void process_led(my_led led, int counter) // NOLINT(bugprone-easily-swappable-pa
         default : return;  // machen wir gar nix
     }
 
-    set_counter_led_as_bit(counter);  // muss implementiert werden.
+    set_counter_led_as_bit(counter);  
 
 }
 
@@ -30,7 +34,8 @@ void process_led(my_led led, int counter) // NOLINT(bugprone-easily-swappable-pa
  */
 void set_forward_led(void)
 {
-    // broo
+    GPIOE->BSRR = LED_D23;          // D23 an
+    GPIOE->BSRR = LED_D22 << AUS;   // D22 aus
 }
 
 /**
@@ -38,7 +43,8 @@ void set_forward_led(void)
  */
 void set_backward_led(void)
 {
-    // broo
+    GPIOE->BSRR = LED_D22;          // D22 an
+    GPIOE->BSRR = LED_D23 << AUS;   // D23 aus
 }
 
 /**
@@ -46,7 +52,7 @@ void set_backward_led(void)
  */
 void set_error_state_led(void)
 {
-    // broo
+    GPIOE->BSRR = LED_D21;
 }
 
 /**
@@ -58,4 +64,15 @@ void set_counter_led_as_bit(int counter)
 {
     // broo
     // nur auf die Untere stelle müssen wir die Zeigen ... D8 bis 15 glaube ich 
+    GPIOD->BSRR = LEDS_D8_D15 << AUS;       // erstmal alle aus
+    GPIOD->BSRR = counter & LEDS_D8_D15;    // nur die unteren 8 bits an
+}
+
+/**
+ * @brief Schaltet alle LEDs aus.
+ */
+void reset_leds(void)
+{
+    GPIOD->BSRR = LEDS_D8_D15 << AUS;
+    GPIOE->BSRR = (LED_D21 | LED_D22 | LED_D23) << AUS;
 }
