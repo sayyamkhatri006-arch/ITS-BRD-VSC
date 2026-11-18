@@ -107,7 +107,7 @@ double get_last_angel(void)
 /**
  * @brief Setzt die Phasenmessung sowie gespeicherte Winkel- und Geschwindigkeitswerte zurück.
  */
-void reset_calcualtor(void)
+void reset_calculator(void)
 {
     reset_phase(); // Phase resetten
     init_phasen(); // hier diese Aktuelle und letzte Phasen auch.

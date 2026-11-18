@@ -16,7 +16,7 @@
  *
  * @return 0 bei Erfolg, ein anderer Wert bei einem Fehler.
  */
-int read_input_channel(void)
+int read_input(void)
 {
     return set_aktuelle_phase(((GPIOF->IDR & MASK_0te_1te_BIT) != 0), getTimeStamp());
 }

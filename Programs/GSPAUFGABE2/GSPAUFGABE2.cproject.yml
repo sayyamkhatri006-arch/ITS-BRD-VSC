@@ -180,6 +180,11 @@ project:
     - group: Program/User/Src
       files:
         - file: Src/main.c
+        - file: Src/read_input.c
+        - file: Src/phase.c
+        - file: Src/calculator.c
+        - file: Src/set_output.c
+        - file: Src/set_led.c
 
 
   components:
