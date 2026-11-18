@@ -31,5 +31,10 @@ void display_speed(void);
  */
 void set_leds(void);
 
+/**
+ * @brief Aktualisiert Winkel und Geschwindigkeit, wenn neue Werte da sind.
+ */
+void update_display(void);
+
 
 #endif

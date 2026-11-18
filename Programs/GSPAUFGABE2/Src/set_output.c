@@ -40,7 +40,7 @@ void display_angle(void)   //broo     // muss getestet werden wegen der Position
     calculate_angle(&angle);
     lcdGotoXY(POS_NR_ACHTSEN,POS_NR_VIER);
 
-    sprintf(winkel, "%f", angle);
+    sprintf(winkel, "%8.1f", angle);     // 8 Zeichen breit, 1 Nachkommastelle
 
     lcdPrintlnS(winkel);
 }
@@ -56,7 +56,7 @@ void display_speed(void)   //broo     // muss getestet werden wegen der Position
     calculate_speed(&geschwindigkeit);
     lcdGotoXY(POS_NR_DREIUNDDREIZIG,POS_NR_SECS);
 
-    sprintf(speed, "%f",geschwindigkeit);
+    sprintf(speed, "%8.1f", geschwindigkeit);    // 8 Zeichen breit, 1 Nachkommastelle
 
     lcdPrintlnS(speed);
 
@@ -69,3 +69,19 @@ void set_leds(void)
 {
     process_led(get_phase_direction() , get_aktuelle_phase().phase_counter);
 }
+
+/**
+ * @brief Aktualisiert Winkel und Geschwindigkeit auf dem Display.
+ *
+ * Es wird nur neu geschrieben, wenn neue Werte da sind
+ * (alle 300ms bzw. nach 3s ohne Phasenwechsel).
+ */
+void update_display(void)
+{
+    if (update_speed())     // nur wenn es was neues gibt
+    {
+        display_angle();
+        display_speed();
+    }
+}
+

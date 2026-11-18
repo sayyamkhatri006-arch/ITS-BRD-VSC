@@ -13,7 +13,6 @@
 #include "set_output.h"
 
 
-
 /**
  * @brief Einstiegspunkt des Programms.
  *
@@ -33,17 +32,13 @@ int main(void)
    
     while (1)
     {
-        // hier müssen wir auch etwas machen damit wir zählen können wir lange unser eine While schleife Zeit nimmt ... steht im Aufgabenblatt habe ich vergessen.
-
         if (s6_pressed())   // wenn s6 gepresst , alles resetten.
         {
             init_display();
             continue;
         }
-        int status = read_input();      // input lesen.
 
-     // int status = read_input();      // zweite Mal lesen.
-        // sollte man nicht zwei mal mindestens gelesen haben , um die Winkel und Speed zu bestimmen ?
+        int status = read_input();      // input lesen.
 
         if (status != 0)                // falls Fehler rausgeworfen wurde , über die LEDs zeigen lassen.
         {
@@ -56,10 +51,8 @@ int main(void)
             continue;       // dann fangen wir ganz oben wieder an.
         }
 
-        display_angle();        // sonst zeigen wir die Winkel.
-        display_speed();        // die Geschwindigkeit.
+        update_display();       // Winkel + Geschwindigkeit, wenn was neues da ist.
         set_leds();             // und setzen wir die entsprechenden Leds an.
-
     }
 }
 
