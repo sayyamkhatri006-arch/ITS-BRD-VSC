@@ -6,11 +6,16 @@
 #include "calculator.h"
 #include "phase.h"
 #include "stdint.h"
+#include "math.h"
+#include "timer.h"
 
 #define ANZAHL_SCHLITZEN 300
 #define ANZAHL_PHASEN 4        // gesamte Phasen = 1200 Pro Umdrehung
 #define EINE_UMDREHUNG 360.0
 #define WINKEL_PRO_PHASENWECHSELUNG 0.3  // 360°/1200 = 0.3°
+#define TAKT_IN_SEK 90000000.0
+#define ZEIT_300MS (90U * 1000U * 300U)   // 300 ms in Ticks
+#define ZEIT_3S (90U * 1000U * 3000U)
 
 static Zeitphase aktuelle_phase;
 static Zeitphase letzte_phase;
@@ -20,6 +25,10 @@ static double aktuelle_winkel;
 
 static double letzte_geschwindigkeit;
 static double aktuelle_geschwindigkeit;
+
+static int fenster_start_counter;        // Phasenzaehler am Anfang vom Fenster
+static uint32_t fenster_start_zeit;      // Zeitstempel dazu
+static uint32_t letzte_ausgabe_zeit;     // wann zuletzt angezeigt wurde
 
 /**
  * @brief Aktualisiert die lokalen Phasenvariablen mit dem aktuellen Zustand.
@@ -52,13 +61,19 @@ void calculate_angle(double *angel)
  */
 void calculate_speed(double *degree_per_second)
 {
-    init_phasen();
 
-    int delta_counter = aktuelle_phase.phase_counter - letzte_phase.phase_counter;
+    int delta_counter = (int)fabs((double)(aktuelle_phase.phase_counter - letzte_phase.phase_counter));
     double delta_winkel = delta_counter * WINKEL_PRO_PHASENWECHSELUNG;
     uint32_t delta_phase_zeit = aktuelle_phase.zeitstempel - letzte_phase.zeitstempel;
+    double zeit_in_sekunde = (double)delta_phase_zeit/TAKT_IN_SEK;
 
-    *degree_per_second = delta_winkel / delta_phase_zeit;
+    if(delta_phase_zeit == 0)
+    {
+        *degree_per_second = 0.0;
+        return;
+    }
+
+    *degree_per_second = delta_winkel /  zeit_in_sekunde;
 
     letzte_geschwindigkeit = aktuelle_geschwindigkeit;
     aktuelle_geschwindigkeit = *degree_per_second;
@@ -117,4 +132,52 @@ void reset_calculator(void)
 
     letzte_geschwindigkeit = 0.0;
     aktuelle_geschwindigkeit = 0.0;
+}
+
+/**
+ * @brief Rechnet die Geschwindigkeit neu, wenn das 300ms Fenster um ist.
+ *
+ * Gab es im Fenster keinen Phasenwechsel, wird bis 3s gewartet, dann ist die
+ * Geschwindigkeit 0.
+ *
+ * @return 1 wenn neue Werte angezeigt werden sollen, sonst 0.
+ */
+int update_speed(void)
+{
+    init_phasen();
+    uint32_t jetzt = getTimeStamp();
+
+    // noch keine 300ms um -> nix machen
+    if ((jetzt - letzte_ausgabe_zeit) < ZEIT_300MS)
+    {
+        return 0;
+    }
+
+    int delta_counter = aktuelle_phase.phase_counter - fenster_start_counter;
+
+    if (delta_counter == 0)
+    {
+        // kein Phasenwechsel -> warten bis 3s um sind
+        if ((jetzt - letzte_ausgabe_zeit) < ZEIT_3S)
+        {
+            return 0;
+        }
+        letzte_geschwindigkeit = aktuelle_geschwindigkeit;
+        aktuelle_geschwindigkeit = 0.0;
+    }
+    else
+    {
+        double delta_winkel = delta_counter * WINKEL_PRO_PHASENWECHSELUNG;
+        uint32_t delta_phase_zeit = aktuelle_phase.zeitstempel - fenster_start_zeit;
+        double delta_sekunden = delta_phase_zeit / TAKT_IN_SEK;
+
+        letzte_geschwindigkeit = aktuelle_geschwindigkeit;
+        aktuelle_geschwindigkeit = delta_winkel / delta_sekunden;
+    }
+
+    // ab hier faengt das neue Fenster an
+    fenster_start_counter = aktuelle_phase.phase_counter;
+    fenster_start_zeit = aktuelle_phase.zeitstempel;
+    letzte_ausgabe_zeit = jetzt;
+    return 1;
 }

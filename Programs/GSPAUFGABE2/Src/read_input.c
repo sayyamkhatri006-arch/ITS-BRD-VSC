@@ -18,7 +18,7 @@
  */
 int read_input(void)
 {
-    return set_aktuelle_phase(((GPIOF->IDR & MASK_0te_1te_BIT) != 0), getTimeStamp());
+    return set_aktuelle_phase((int)(GPIOF->IDR & MASK_0te_1te_BIT), getTimeStamp());
 }
 
 /**

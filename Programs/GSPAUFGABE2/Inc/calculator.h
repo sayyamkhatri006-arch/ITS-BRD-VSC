@@ -65,4 +65,10 @@ double get_last_angel(void);
  */
 void reset_calculator(void);
 
+
+void init_calculator(void);
+
+
+int update_speed(void);
+
 #endif

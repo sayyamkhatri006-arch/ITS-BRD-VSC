@@ -11,6 +11,8 @@
 #include "timer.h"
 #include "read_input.h"
 #include "set_output.h"
+#include "delay.h"
+#define MEASUREMENT_INTERVAL_MS 300
 
 
 
@@ -40,12 +42,9 @@ int main(void)
             init_display();
             continue;
         }
-        int status = read_input();      // input lesen.
+        int status = read_input();      // input lesen.        
 
-     // int status = read_input();      // zweite Mal lesen.
-        // sollte man nicht zwei mal mindestens gelesen haben , um die Winkel und Speed zu bestimmen ?
-
-        if (status != 0)                // falls Fehler rausgeworfen wurde , über die LEDs zeigen lassen.
+        if (status != 0 )                // falls Fehler rausgeworfen wurde , über die LEDs zeigen lassen.
         {
             set_leds();
             while(!s6_pressed())
@@ -56,10 +55,17 @@ int main(void)
             continue;       // dann fangen wir ganz oben wieder an.
         }
 
-        display_angle();        // sonst zeigen wir die Winkel.
-        display_speed();        // die Geschwindigkeit.
+        if(upadte_display())
+        {
+            display_angle();        // sonst zeigen wir die Winkel.
+            display_speed();        // die Geschwindigkeit.
+        }
+    
         set_leds();             // und setzen wir die entsprechenden Leds an.
 
+
+
+        delay(MEASUREMENT_INTERVAL_MS);
     }
 }
 

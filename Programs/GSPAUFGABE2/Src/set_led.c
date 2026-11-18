@@ -53,6 +53,8 @@ void set_backward_led(void)
 void set_error_state_led(void)
 {
     GPIOE->BSRR = LED_D21;
+    GPIOE->BSRR = LED_D22 << AUS;   // D22 aus
+    GPIOE->BSRR = LED_D23 << AUS;   // D23 aus
 }
 
 /**
@@ -62,8 +64,6 @@ void set_error_state_led(void)
  */
 void set_counter_led_as_bit(int counter)
 {
-    // broo
-    // nur auf die Untere stelle müssen wir die Zeigen ... D8 bis 15 glaube ich 
     GPIOD->BSRR = LEDS_D8_D15 << AUS;       // erstmal alle aus
     GPIOD->BSRR = counter & LEDS_D8_D15;    // nur die unteren 8 bits an
 }
