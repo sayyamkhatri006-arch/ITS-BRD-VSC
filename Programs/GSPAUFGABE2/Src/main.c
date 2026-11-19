@@ -13,6 +13,7 @@
 #include "set_output.h"
 
 
+
 /**
  * @brief Einstiegspunkt des Programms.
  *
@@ -37,10 +38,9 @@ int main(void)
             init_display();
             continue;
         }
+        int status = read_input();      // input lesen.        
 
-        int status = read_input();      // input lesen.
-
-        if (status != 0)                // falls Fehler rausgeworfen wurde , über die LEDs zeigen lassen.
+        if (status != 0 )                // falls Fehler rausgeworfen wurde , über die LEDs zeigen lassen.
         {
             set_leds();
             while(!s6_pressed())
@@ -53,6 +53,7 @@ int main(void)
 
         update_display();       // Winkel + Geschwindigkeit, wenn was neues da ist.
         set_leds();             // und setzen wir die entsprechenden Leds an.
+
     }
 }
 

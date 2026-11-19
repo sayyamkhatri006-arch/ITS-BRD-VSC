@@ -18,7 +18,7 @@
  */
 int read_input(void)
 {
-    return set_aktuelle_phase((GPIOF->IDR & MASK_0te_1te_BIT), getTimeStamp());
+    return set_aktuelle_phase((int)(GPIOF->IDR & MASK_0te_1te_BIT), getTimeStamp());
 }
 
 /**
@@ -33,6 +33,5 @@ bool s6_pressed(void)
         reset_phase();
         return true;
     }
-    
     return false;
 }

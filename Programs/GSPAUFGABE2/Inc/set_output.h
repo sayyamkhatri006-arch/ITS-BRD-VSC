@@ -6,8 +6,11 @@
  * Darstellen von Fehlern, Winkeln und Geschwindigkeiten bereit.
  */
 
+
 #ifndef SET_OUTPUT
 #define SET_OUTPUT
+
+#include <stdbool.h>
 
 /**
  * @brief Initialisiert das Display für die Ausgabe.
@@ -30,6 +33,7 @@ void display_speed(void);
  * @brief Aktualisiert die LEDs entsprechend dem aktuellen Zustand.
  */
 void set_leds(void);
+
 
 /**
  * @brief Aktualisiert Winkel und Geschwindigkeit, wenn neue Werte da sind.

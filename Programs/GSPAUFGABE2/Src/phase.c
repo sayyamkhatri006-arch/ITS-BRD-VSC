@@ -103,13 +103,12 @@ int set_aktuelle_phase(int neue_phase, uint32_t zeitstempel) // NOLINT(bugprone-
     }
     else
     {
-        phase_direction = FEHLERSTAND;   // damit D21 angeht
-        status =  FEHLERSTAND;
+        phase_direction = FEHLERSTAND;
+        status =  1;
     }
 
     return status;
 }
-
 
 /**
  * @brief Gibt die aktuell eingestellte Bewegungsrichtung zurück.
