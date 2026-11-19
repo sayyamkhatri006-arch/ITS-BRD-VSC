@@ -11,8 +11,10 @@
 #include "timer.h"
 #include "read_input.h"
 #include "set_output.h"
+#include "stm32f4xx.h"
 
-
+#define MESS_PIN_LOOP (0x01u << 1u)   // PE1 = OUT9, nur fuer Oszi-Messung
+#define AUS <<16u
 
 /**
  * @brief Einstiegspunkt des Programms.
@@ -31,14 +33,32 @@ int main(void)
 
     init_display();     // Display zum ersten mal initialisieren.
    
+    int mess_pin_an = 0;      // Oszi: merkt sich, ob der Messpin gerade high ist
+
+
+
     while (1)
     {
+        if (mess_pin_an)      // Oszi: Messpin bei jedem Durchlauf umschalten
+        {
+            GPIOE->BSRR = MESS_PIN_LOOP AUS;   // low
+            mess_pin_an = 0;
+        }
+        else
+        {
+            GPIOE->BSRR = MESS_PIN_LOOP;          // high
+            mess_pin_an = 1;  
+        }
+
+
+
+
         if (s6_pressed())   // wenn s6 gepresst , alles resetten.
         {
             init_display();
             continue;
         }
-        int status = read_input();      // input lesen.        
+        int status = read_input();      // input lesen.
 
         if (status != 0 )                // falls Fehler rausgeworfen wurde , über die LEDs zeigen lassen.
         {
@@ -54,7 +74,9 @@ int main(void)
         update_display();       // Winkel + Geschwindigkeit, wenn was neues da ist.
         set_leds();             // und setzen wir die entsprechenden Leds an.
 
+        
     }
 }
+
 
 // EOF

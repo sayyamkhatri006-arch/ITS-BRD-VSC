@@ -4,7 +4,7 @@
         {
             "label": "C-Pretty-Printer",
             "type": "shell",
-            "command": "python3",
+            "command": "/opt/anaconda3/bin/python3",
             "args": ["${workspaceFolder}/bin/format_all.py",
 		     "${command:cmsis-csolution.getSolutionFile}"],
             "group": "none"
@@ -12,7 +12,7 @@
         {
             "label": "C-Linter",
             "type": "shell",
-            "command": "python3",
+            "command": "/opt/anaconda3/bin/python3",
             "args": [
                 "${workspaceFolder}/bin/lint_all.py",
                 "${command:cmsis-csolution.getSolutionFile}" ],

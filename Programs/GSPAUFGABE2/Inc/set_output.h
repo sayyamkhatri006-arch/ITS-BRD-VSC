@@ -40,5 +40,7 @@ void set_leds(void);
  */
 void update_display(void);
 
+void output_measure_pin(bool high);
+
 
 #endif

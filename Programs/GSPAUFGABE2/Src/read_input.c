@@ -8,7 +8,7 @@
 #include "timer.h"
 #include "phase.h"
 
-#define MASK_0te_1te_BIT 0x03u   // Maske für Bitpositionen 0 und 1
+#define MASK_0te_1te_BIT (0x03u << 0u)  // Maske für Bitpositionen 0 und 1
 #define MASK_6te_BIT (0x01u << 6u)      // Maske für Bitposition 6
 
 /**

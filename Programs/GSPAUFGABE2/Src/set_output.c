@@ -14,9 +14,14 @@
 #define POS_NR_SECS 6
 #define POS_NR_FUENFUNDZWANZIG 25
 #define POS_NR_DREIUNDDREIZIG 33
+#define AUS << 16u
 
 static char letzte_winkel[ANZAHL_STELLEN];
 static char letzte_geschwindigkeit[ANZAHL_STELLEN];
+
+#include "stm32f4xx.h"
+
+#define MESS_PIN_DISPLAY (0x01u << 0u)   // PE0 = OUT8, nur fuer Oszi-Messung
 
 
 
@@ -115,8 +120,9 @@ void update_display(void)
 {
     if (update_speed())     // nur wenn es was neues gibt
     {
+        GPIOE->BSRR = MESS_PIN_DISPLAY;          // Oszi: high, Ausgabe beginnt
         display_angle();
         display_speed();
+        GPIOE->BSRR = MESS_PIN_DISPLAY AUS;   // Oszi: low, Ausgabe fertig
     }
 }
-

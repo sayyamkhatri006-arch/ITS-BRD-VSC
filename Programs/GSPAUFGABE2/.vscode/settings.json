@@ -5,8 +5,9 @@
     "memory-inspector.groupings.groupsPerRow": "Autofit",
     "memory-inspector.groupings.MAUsPerGroup": 4,
     "memory-inspector.scrollingBehavior": "Auto-Append",
-    "cmake.sourceDirectory": "C:/GS/ITS-BRD-Partner/Programs/GSPAUFGABE2/tmp/ITSboard/default",
+    "cmake.sourceDirectory": "/Users/sayyamsinghkhatri/Desktop/GSP-C/ITS-BRD-VSC/Programs/GSPAUFGABE2/tmp/ITSboard/default",
     "clangd.arguments": [
-        "--compile-commands-dir=c:\\GS\\ITS-BRD-Partner\\Programs\\GSPAUFGABE2\\out\\GSPAUFGABE2\\ITSboard\\Debug"
-    ]
+        "--compile-commands-dir=/Users/sayyamsinghkhatri/Desktop/GSP-C/ITS-BRD-VSC/Programs/GSPAUFGABE2/out/GSPAUFGABE2/ITSboard/Debug"
+    ],
+    "C_Cpp.intelliSenseEngine": "disabled"
 }
