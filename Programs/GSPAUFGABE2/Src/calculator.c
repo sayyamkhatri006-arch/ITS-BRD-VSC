@@ -61,7 +61,7 @@ void calculate_angle(double *angel)
  */
 void calculate_speed(double *degree_per_second)
 {
-    *degree_per_second = aktuelle_geschwindigkeit;   // berechnet wird in update_speed()
+    *degree_per_second = fabs(aktuelle_geschwindigkeit);   // berechnet wird in update_speed()
 }
 
 /**
