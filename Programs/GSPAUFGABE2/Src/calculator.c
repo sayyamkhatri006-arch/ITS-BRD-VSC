@@ -181,3 +181,4 @@ int update_speed(void)
     letzte_ausgabe_zeit = jetzt;
     return 1;
 }
+
