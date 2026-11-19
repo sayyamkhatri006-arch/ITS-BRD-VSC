@@ -64,8 +64,9 @@ void display_angle(void)
                 lcdPrintC(winkel[i]);
             }
         }
-         strcpy(letzte_winkel,winkel);     // als letzte_winkel spreichern ,damit wir später vergleichen können, 
+         strlcpy(letzte_winkel,winkel,sizeof(winkel));     // als letzte_winkel spreichern ,damit wir später vergleichen können, 
                                       //ob es sich geändert hat , wenn ja dann wo ?
+                                      // strlcpy copiert ein String mit einer festerlänge , die man angibt.
     }
 }
 
@@ -92,7 +93,7 @@ void display_speed(void)
                 lcdPrintC(geschwindigkeit[i]);
             }
         }
-        strcpy(letzte_geschwindigkeit,geschwindigkeit);
+        strlcpy(letzte_geschwindigkeit,geschwindigkeit,sizeof(geschwindigkeit));
     }
 }
 

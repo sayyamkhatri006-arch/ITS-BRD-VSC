@@ -1,10 +1,11 @@
 #include "set_led.h"
 #include "stm32f4xx.h"
-#define LED_D21 (0x01 << 5)     // PE5
-#define LED_D22 (0x01 << 6)     // PE6
-#define LED_D23 (0x01 << 7)     // PE7
-#define LEDS_D8_D15 0xFF        // PD0 bis PD7
-#define AUS 16                  // obere 16 bits im BSRR = ausschalten
+#include <stdint.h>
+#define LED_D21 (0x01u << 5u)     // PE5
+#define LED_D22 (0x01u << 6u)     // PE6
+#define LED_D23 (0x01u << 7u)     // PE7
+#define LEDS_D8_D15 0xFFu        // PD0 bis PD7
+#define AUS 16u                  // obere 16 bits im BSRR = ausschalten
 
 
 /**
@@ -65,7 +66,7 @@ void set_error_state_led(void)
 void set_counter_led_as_bit(int counter)
 {
     GPIOD->BSRR = LEDS_D8_D15 << AUS;       // erstmal alle aus
-    GPIOD->BSRR = counter & LEDS_D8_D15;    // nur die unteren 8 bits an
+    GPIOD->BSRR = (uint32_t)counter & LEDS_D8_D15;    // nur die unteren 8 bits an
 }
 
 /**

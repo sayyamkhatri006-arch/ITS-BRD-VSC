@@ -8,8 +8,8 @@
 #include "timer.h"
 #include "phase.h"
 
-#define MASK_0te_1te_BIT (0x03 << 0)  // Maske für Bitpositionen 0 und 1
-#define MASK_6te_BIT (0x01 << 6)      // Maske für Bitposition 6
+#define MASK_0te_1te_BIT 0x03u   // Maske für Bitpositionen 0 und 1
+#define MASK_6te_BIT (0x01u << 6u)      // Maske für Bitposition 6
 
 /**
  * @brief Liest den digitalen Eingangskanal 1 und 2 aus GPIOF und setzt die aktuelle Phase.

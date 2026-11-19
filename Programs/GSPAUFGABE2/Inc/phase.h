@@ -20,7 +20,7 @@ typedef enum {
     VORWAERTS,          // 23 LED
     RUECKWAERTS,        // 22 LED
     FEHLERSTAND,        // 21 LED
-    STILLSTAND          // KEINE LEDS
+    STILLSTAND,         // KEINE LEDS
 } Phase_direction;
 
 
