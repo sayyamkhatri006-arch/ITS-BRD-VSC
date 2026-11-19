@@ -18,15 +18,14 @@ void process_led(my_led led, int counter) // NOLINT(bugprone-easily-swappable-pa
 {
     switch(led)
     {
-        case  D23: set_forward_led(); break;
+        case  D23: set_forward_led(); break;            // In den Selben Reihenfolge in Phasen.h Enum Definiert.
         case  D22: set_backward_led(); break;
         case  D21: set_error_state_led(); break;
 
         default : return;  // machen wir gar nix
     }
 
-    set_counter_led_as_bit(counter);  
-
+    set_counter_led_as_bit(counter);            // Die LEDS D8-D15 geleuchtet.
 }
 
 
@@ -75,5 +74,5 @@ void set_counter_led_as_bit(int counter)
 void reset_leds(void)
 {
     GPIOD->BSRR = LEDS_D8_D15 << AUS;
-    GPIOE->BSRR = (LED_D21 | LED_D22 | LED_D23) << AUS;
+    GPIOE->BSRR = (LED_D21 | LED_D22 | LED_D23) << AUS;     // mit bisweise oder alle zusammen verknüpft und dann auf einmal alle ausgeschaltet.
 }

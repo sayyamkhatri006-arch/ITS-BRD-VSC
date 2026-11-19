@@ -19,7 +19,7 @@
 int read_input(void)
 {
     return set_aktuelle_phase((int)(GPIOF->IDR & MASK_0te_1te_BIT), getTimeStamp());
-}
+}                                       // hier bit operation Auf dem IDR liefert ein Unsigend int .
 
 /**
  * @brief Prüft, ob die S6-Taste aktuell gedrückt wurde.
@@ -28,9 +28,9 @@ int read_input(void)
  */
 bool s6_pressed(void)
 {
-    if((GPIOF->IDR & MASK_6te_BIT) == 0)
+    if((GPIOF->IDR & MASK_6te_BIT) == 0)    // 0 = gedürckt 
     {
-        reset_phase();
+        reset_phase();     
         return true;
     }
     return false;

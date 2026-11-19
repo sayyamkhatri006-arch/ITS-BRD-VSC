@@ -133,35 +133,36 @@ void reset_calculator(void)
  */
 int update_speed(void)
 {
-    init_phasen();
-    uint32_t jetzt = getTimeStamp();
+    init_phasen();                      // die Phasen werden aktuallisiert.
+    uint32_t jetzt = getTimeStamp();    // die jetzige Zeitstemple genommen.
 
-    // noch keine 300ms um -> nix machen
-    if ((jetzt - letzte_ausgabe_zeit) < ZEIT_300MS)
+    // noch keine 300ms um -> nix machen.               Die Geschwindigkeit soll nur dann berechnet werden ,
+    if ((jetzt - letzte_ausgabe_zeit) < ZEIT_300MS) // entwerder, wenn es eine Phasewechselung gibt oder 3s vorbei sind.
     {
-        return 0;
+        return 0;                       // False
     }
 
     int delta_counter = aktuelle_phase.phase_counter - fenster_start_counter;
 
-    if (delta_counter == 0)
+    if (delta_counter == 0) // wenn es keine Phasewechselung gab
     {
         // kein Phasenwechsel -> warten bis 3s um sind
-        if ((jetzt - letzte_ausgabe_zeit) < ZEIT_3S)
-        {
+        if ((jetzt - letzte_ausgabe_zeit) < ZEIT_3S)    // sollte er warte bis 3s vorbei sind und dann es wieder auf 0 setzen
+        {                                           
             return 0;
         }
         letzte_geschwindigkeit = aktuelle_geschwindigkeit;
         aktuelle_geschwindigkeit = 0.0;
     }
-    else
-    {
+    else        // wenn es doch phasewechselung gab, wird dann der Winkeländerung und Phasezeitstempeländerung berechnet
+    {           // Diese Phasezeitstempeländerung wird es in Sekunden umgewandelt um , die Geschwindigkeit zu berechnen.
         double delta_winkel = delta_counter * WINKEL_PRO_PHASENWECHSELUNG;
         uint32_t delta_phase_zeit = aktuelle_phase.zeitstempel - fenster_start_zeit;
         double delta_sekunden = delta_phase_zeit / TAKT_IN_SEK;
 
-        letzte_geschwindigkeit = aktuelle_geschwindigkeit;
-        aktuelle_geschwindigkeit = delta_winkel / delta_sekunden;
+        letzte_geschwindigkeit = aktuelle_geschwindigkeit;    // erst mal wird die letzte Geschwindigkeit gespeichert 
+
+        aktuelle_geschwindigkeit = delta_winkel / delta_sekunden;   // dann wird die neue Berechnet.
     }
 
     // ab hier faengt das neue Fenster an

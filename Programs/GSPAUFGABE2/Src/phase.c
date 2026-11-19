@@ -89,7 +89,7 @@ int set_aktuelle_phase(int neue_phase, uint32_t zeitstempel) // NOLINT(bugprone-
     }
 
     int aktuelle = get_phasenumber(aktuelle_phase);                  // in einer geordernte Reihenfolge bringen
-    int letzte = get_phasenumber(letzte_phase);      //  
+    int letzte = get_phasenumber(letzte_phase);      //  Damit einfacher ist Randfälle zu testen.
 
     if (aktuelle == (letzte + 1) || (aktuelle == 1 && letzte == 4))
     {
@@ -104,7 +104,7 @@ int set_aktuelle_phase(int neue_phase, uint32_t zeitstempel) // NOLINT(bugprone-
     else
     {
         phase_direction = FEHLERSTAND;
-        status =  FEHLERSTAND;
+        status =  FEHLERSTAND;  
     }
 
     return status;

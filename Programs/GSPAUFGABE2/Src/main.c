@@ -15,6 +15,8 @@
 
 #define MESS_PIN_LOOP (0x01u << 1u)   // PE1 = OUT9, nur fuer Oszi-Messung
 #define AUS <<16u
+#define LOW 0
+#define HIGH 1
 
 /**
  * @brief Einstiegspunkt des Programms.
@@ -27,42 +29,39 @@
  */
 int main(void)
 {
-    initITSboard();
-    initTimer();
+    initITSboard();         // Board Initialisieren
+    initTimer();            // Timer starten
     GUI_init(DEFAULT_BRIGHTNESS);
 
     init_display();     // Display zum ersten mal initialisieren.
    
-    int mess_pin_an = 0;      // Oszi: merkt sich, ob der Messpin gerade high ist
-
-
+    int mess_pin_an = LOW;   // am Anfang ist es LOW ( FALSE )   
 
     while (1)
     {
-        if (mess_pin_an)      // Oszi: Messpin bei jedem Durchlauf umschalten
+        if (mess_pin_an)      // Wenn es High ist wird es low gemacht.
         {
-            GPIOE->BSRR = MESS_PIN_LOOP AUS;   // low
-            mess_pin_an = 0;
+            GPIOE->BSRR = MESS_PIN_LOOP AUS;   // low (FALSE)
+            mess_pin_an = LOW;
         }
-        else
+        else                // Beim Low wird es high gemacht.
         {
-            GPIOE->BSRR = MESS_PIN_LOOP;          // high
-            mess_pin_an = 1;  
+            GPIOE->BSRR = MESS_PIN_LOOP;          // high  (TRUE)
+            mess_pin_an = HIGH;  
         }
 
 
-
-
-        if (s6_pressed())   // wenn s6 gepresst , alles resetten.
-        {
+        if (s6_pressed())   // wir prüfen , ob s6 gedürck ist oder nicht.
+        {                  //  wenn ja wird es alles neu gestartet und display wieder aktuallisiert.
             init_display();
             continue;
         }
+
         int status = read_input();      // input lesen.
 
-        if (status != 0 )                // falls Fehler rausgeworfen wurde , über die LEDs zeigen lassen.
+        if (status != 0 )               // Fall es einen Fehlr beim einlesen gibt.
         {
-            set_leds();
+            set_leds();                 // dann setzen wir erstmal die LEDs und solange es nicht s6 gedürckt wird , wird es neu gestartet.
             while(!s6_pressed())
             {
                 // solange s6 nicht gedückt wurde wird es gar nix gemacht.
@@ -73,7 +72,6 @@ int main(void)
 
         update_display();       // Winkel + Geschwindigkeit, wenn was neues da ist.
         set_leds();             // und setzen wir die entsprechenden Leds an.
-
         
     }
 }

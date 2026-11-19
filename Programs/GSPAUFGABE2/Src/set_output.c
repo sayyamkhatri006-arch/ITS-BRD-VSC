@@ -8,31 +8,36 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define ANZAHL_STELLEN 12
+
 #define POS_NR_EINS 1
 #define POS_NR_VIER 4
 #define POS_NR_SECS 6
 #define POS_NR_FUENFUNDZWANZIG 25
-#define POS_NR_DREIUNDDREIZIG 33
 #define AUS << 16u
+#define MESS_PIN_DISPLAY (0x01u << 0u)   // PE0 = OUT8, nur fuer Oszi-Messung
+
 
 static char letzte_winkel[ANZAHL_STELLEN];
 static char letzte_geschwindigkeit[ANZAHL_STELLEN];
 
 #include "stm32f4xx.h"
 
-#define MESS_PIN_DISPLAY (0x01u << 0u)   // PE0 = OUT8, nur fuer Oszi-Messung
+bool print;
+char winkel[ANZAHL_STELLEN];       // Damit die Zahl in einem String umgewandelt wird.
+int index;
 
 
 
-
+/**
+ * @brief Display wird neu gestartet und es wird Speed und Angle am Anfang 0 gezeigt.
+ */
 void init_display() 
 {
     reset_calculator(); // alles resetten 
     reset_leds();       // alle Leds aus
 
     memset(letzte_winkel, 0, sizeof(letzte_winkel));                    // gespeicherte Anzeige loeschen
-    memset(letzte_geschwindigkeit, 0, sizeof(letzte_geschwindigkeit));
+    memset(letzte_geschwindigkeit, 0, sizeof(letzte_geschwindigkeit)); // man gibt wie viel Bytes man verändern will mit welchem Wert und in welcher Adresse.
 
     GUI_clear(GREEN);
 
@@ -51,28 +56,20 @@ void init_display()
 void display_angle(void)   
 {
     double angle;
-    char winkel[ANZAHL_STELLEN];       // Damit die Zahl in einem String umgewandelt wird.
-
+    
     calculate_angle(&angle);    // Winkelberechnung
-    sprintf(winkel, "%8.1f", angle);  // in einem String umwandeln (8 Zeichen, 1 Nachkommastelle)
-
-
-    if(get_last_angel()!= angle)      // wenn die Winkel geändert wurde nur dann ausgegeben.
+    if(!print)
     {
-        int length = (int)strlen(winkel);
+        sprintf(winkel, "%8.1f", angle);  // in einem String umwandeln (8 Zeichen, 1 Nachkommastelle)
 
-        for(int i = 0 ; i < length ; ++i)
+      //  if(get_last_angel()!= angle)      // wenn die Winkel geändert wurde nur dann ausgegeben.
         {
-            if(letzte_winkel[i] != winkel[i])
-            {
-                lcdGotoXY(POS_NR_FUENFUNDZWANZIG+i, POS_NR_VIER);
-                lcdPrintC(winkel[i]);
-            }
-        }
-         strlcpy(letzte_winkel,winkel,sizeof(winkel));     // als letzte_winkel spreichern ,damit wir später vergleichen können, 
-                                      //ob es sich geändert hat , wenn ja dann wo ?
-                                      // strlcpy copiert ein String mit einer festerlänge , die man angibt.
+            print = true;
+            index = 0;
+        }   
     }
+
+                             
 }
 
 /**
@@ -83,16 +80,17 @@ void display_speed(void)
     double speed;
     char geschwindigkeit[ANZAHL_STELLEN];
 
-    calculate_speed(&speed);
-    sprintf(geschwindigkeit, "%8.1f", speed);  // 8 Zeichen, 1 Nachkommastelle
+    calculate_speed(&speed);  // Die geschwindigkeit berechnet
 
-    if(get_last_speed()!= speed)    // wenn die Winkel geändert wurde nur dann ausgegeben.
+    sprintf(geschwindigkeit, "%8.1f", speed);  // in einem String umgewandelt 8 Zeichen, 1 Nachkommastelle 
+
+    if(get_last_speed()!= speed)    // wenn die Geschwindigkeit geändert wurde nur dann die geänderte Stelle ausgeben.
     {
         int length = (int)strlen(geschwindigkeit);      // der gibt mir die Anzahl der Elemente bis Null-Terinator
-
+                                                        // Anzahl der Elemente ohne null Terminator.
         for(int i = 0 ; i < length ; ++i)
         {
-            if(letzte_geschwindigkeit[i] != geschwindigkeit[i])
+            if(letzte_geschwindigkeit[i] != geschwindigkeit[i])     // Wenn die Zeichen an dieser Stelle anders ist, wird es ausgegeben.
             {
                 lcdGotoXY(POS_NR_FUENFUNDZWANZIG+i, POS_NR_SECS);
                 lcdPrintC(geschwindigkeit[i]);
@@ -120,9 +118,33 @@ void update_display(void)
 {
     if (update_speed())     // nur wenn es was neues gibt
     {
-        GPIOE->BSRR = MESS_PIN_DISPLAY;          // Oszi: high, Ausgabe beginnt
         display_angle();
+        display_ausgabe();
         display_speed();
-        GPIOE->BSRR = MESS_PIN_DISPLAY AUS;   // Oszi: low, Ausgabe fertig
     }
 }
+
+void display_ausgabe()
+{
+    if(print)
+    {
+        if(winkel[index] == '\0')
+        {
+            print = false;
+
+            return;
+        }
+        if(letzte_winkel[index] != winkel[index])
+        {
+            lcdGotoXY(POS_NR_FUENFUNDZWANZIG+index, POS_NR_VIER); // als letzte_winkel spreichern ,damit wir später vergleichen können, 
+                                      //ob es sich geändert hat , wenn ja dann wo ?
+                                      // strlcpy copiert ein String mit einer festerlänge , die man angibt.
+            lcdPrintC(winkel[index]);
+            letzte_winkel[index] = winkel[index]; 
+            ++index;
+        }
+    }
+}
+    
+
+
