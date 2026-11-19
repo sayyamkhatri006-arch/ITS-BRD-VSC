@@ -74,7 +74,7 @@ int set_aktuelle_phase(int neue_phase, uint32_t zeitstempel) // NOLINT(bugprone-
 {
     int status = 0;
 
-    if (aktuelle_phase.phase == neue_phase)
+    if (aktuelle_phase.phase == neue_phase) // die Phase hat sich nicht geändert
     {
         return status;
     }
@@ -88,8 +88,8 @@ int set_aktuelle_phase(int neue_phase, uint32_t zeitstempel) // NOLINT(bugprone-
         return status;
     }
 
-    int aktuelle = get_phasenumber(aktuelle_phase);
-    int letzte = get_phasenumber(letzte_phase);
+    int aktuelle = get_phasenumber(aktuelle_phase);                  // in einer geordernte Reihenfolge bringen
+    int letzte = get_phasenumber(letzte_phase);      //  
 
     if (aktuelle == (letzte + 1) || (aktuelle == 1 && letzte == 4))
     {
@@ -104,7 +104,7 @@ int set_aktuelle_phase(int neue_phase, uint32_t zeitstempel) // NOLINT(bugprone-
     else
     {
         phase_direction = FEHLERSTAND;
-        status =  1;
+        status =  FEHLERSTAND;
     }
 
     return status;
