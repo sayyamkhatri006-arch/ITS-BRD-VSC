@@ -26,6 +26,10 @@ bool print;
 char winkel[ANZAHL_STELLEN];       // Damit die Zahl in einem String umgewandelt wird.
 int index;
 
+static bool print_speed;                    // NEU: noch Zeichen von der Geschwindigkeit auszugeben?
+static char speed_puffer[ANZAHL_STELLEN];   // NEU: Geschwindigkeit als String (wie winkel[])
+static int index_speed;                     // NEU: welches Zeichen als naechstes dran ist (wie index)
+
 
 
 /**
@@ -38,6 +42,9 @@ void init_display()
 
     memset(letzte_winkel, 0, sizeof(letzte_winkel));                    // gespeicherte Anzeige loeschen
     memset(letzte_geschwindigkeit, 0, sizeof(letzte_geschwindigkeit)); // man gibt wie viel Bytes man verändern will mit welchem Wert und in welcher Adresse.
+
+    print = false;          // NEU: nach dem Reset ist vom Winkel nichts mehr halb ausgegeben
+    print_speed = false;    // NEU: von der Geschwindigkeit auch nicht
 
     GUI_clear(GREEN);
 
@@ -73,31 +80,21 @@ void display_angle(void)
 }
 
 /**
- * @brief Zeigt eine Geschwindigkeit auf dem Display an.
+ * @brief Schreibt die Geschwindigkeit in den Puffer (Ausgabe passiert in display_ausgabe_speed).
  */
-void display_speed(void)   
+void display_speed(void)                    // GEÄNDERT: ganze Funktion, jetzt aufgebaut wie display_angle()
 {
     double speed;
-    char geschwindigkeit[ANZAHL_STELLEN];
 
     calculate_speed(&speed);  // Die geschwindigkeit berechnet
 
-    sprintf(geschwindigkeit, "%8.1f", speed);  // in einem String umgewandelt 8 Zeichen, 1 Nachkommastelle 
-
-    if(get_last_speed()!= speed)    // wenn die Geschwindigkeit geändert wurde nur dann die geänderte Stelle ausgeben.
+    if(!print_speed)                            // GEÄNDERT: nur wenn die alte Zahl fertig ausgegeben ist
     {
-        int length = (int)strlen(geschwindigkeit);      // der gibt mir die Anzahl der Elemente bis Null-Terinator
-                                                        // Anzahl der Elemente ohne null Terminator.
-        for(int i = 0 ; i < length ; ++i)
-        {
-            if(letzte_geschwindigkeit[i] != geschwindigkeit[i])     // Wenn die Zeichen an dieser Stelle anders ist, wird es ausgegeben.
-            {
-                lcdGotoXY(POS_NR_FUENFUNDZWANZIG+i, POS_NR_SECS);
-                lcdPrintC(geschwindigkeit[i]);
-            }
-        }
-        strlcpy(letzte_geschwindigkeit,geschwindigkeit,sizeof(geschwindigkeit));
+        sprintf(speed_puffer, "%8.1f", speed);  // GEÄNDERT: in den Puffer statt in eine lokale Variable
+        print_speed = true;                     // GEÄNDERT: "es gibt was auszugeben"
+        index_speed = 0;                        // GEÄNDERT: vorne anfangen
     }
+    // GEÄNDERT: die alte for-Schleife mit lcdPrintC ist weg, die hat alle Zeichen auf einmal geschrieben
 }
 
 /**
@@ -119,8 +116,17 @@ void update_display(void)
     if (update_speed())     // nur wenn es was neues gibt
     {
         display_angle();
-        display_ausgabe();
+        
         display_speed();
+    }
+
+    if (print)                      // GEÄNDERT: jeden Durchlauf hoechstens 1 Zeichen:
+    {
+        display_ausgabe();          // GEÄNDERT: erst die Zeichen vom Winkel
+    }
+    else
+    {
+        display_ausgabe_speed();    // NEU: wenn der Winkel fertig ist, die Zeichen von der Geschwindigkeit
     }
 }
 
@@ -141,10 +147,31 @@ void display_ausgabe()
                                       // strlcpy copiert ein String mit einer festerlänge , die man angibt.
             lcdPrintC(winkel[index]);
             letzte_winkel[index] = winkel[index]; 
-            ++index;
+            
         }
+        ++index;
     }
 }
-    
 
 
+/**
+ * @brief Gibt pro Aufruf hoechstens ein Zeichen von der Geschwindigkeit aus.
+ */
+void display_ausgabe_speed(void)            // NEU: ganze Funktion, Kopie von display_ausgabe() fuer die Geschwindigkeit
+{
+    if(print_speed)                                     // NEU: gibt es noch was auszugeben?
+    {
+        if(speed_puffer[index_speed] == '\0')           // NEU: Ende vom String erreicht?
+        {
+            print_speed = false;                        // NEU: fertig
+            return;
+        }
+        if(letzte_geschwindigkeit[index_speed] != speed_puffer[index_speed])   // NEU: nur geaenderte Zeichen
+        {
+            lcdGotoXY(POS_NR_FUENFUNDZWANZIG+index_speed, POS_NR_SECS);       // NEU: Zeile 6 statt Zeile 4
+            lcdPrintC(speed_puffer[index_speed]);                              // NEU: 1 Zeichen schreiben
+            letzte_geschwindigkeit[index_speed] = speed_puffer[index_speed];   // NEU: merken, was jetzt dasteht
+        }
+        ++index_speed;                                  // NEU: immer zum naechsten Zeichen
+    }
+}

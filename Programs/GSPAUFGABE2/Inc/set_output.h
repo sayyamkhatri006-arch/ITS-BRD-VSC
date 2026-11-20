@@ -57,5 +57,10 @@ void output_measure_pin(bool high);
 
 void display_ausgabe();
 
+/**
+ * @brief Gibt pro Aufruf hoechstens ein Zeichen von der Geschwindigkeit aus.
+ */
+void display_ausgabe_speed(void);       // NEU
+
 
 #endif
